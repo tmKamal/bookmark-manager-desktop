@@ -3,7 +3,7 @@ import { Badge, Button } from "react-bootstrap";
 import Moment from 'react-moment';
 
 const ProjectItem = ({
-  record: { _id, name, category, description, url, created },
+  record: { _id, name, category, description, url, created },deleteItem
 }) => {
   const setVarient = () => {
     if (category === "important") {
@@ -22,13 +22,13 @@ const ProjectItem = ({
         </Badge>
       </td>
       {/* to capital the first letter of category name. */}
-      <td className="align-middle">{description}</td>
+   
       <td className="align-middle">{url}</td>
       <td className="align-middle">
         <Moment format="MMMM Do YYYY">{created}</Moment>
       </td>
       <td className="align-middle text-center">
-        <Button className="" variant="danger" size="sm">
+        <Button className="" variant="danger" size="sm" onClick={()=>deleteItem(_id)}>
           X
         </Button>
       </td>
