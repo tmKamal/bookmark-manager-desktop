@@ -1,6 +1,6 @@
 const path = require("path");
 const url = require("url");
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const connectDB = require("./config/db");
 const Bookmark = require("./models/bookmark");
 //connect to DB
@@ -8,6 +8,7 @@ connectDB();
 let mainWindow;
 
 let isDev = false;
+const isMac = process.platform === "darwin" ? true : false;
 
 if (
   process.env.NODE_ENV !== undefined &&
@@ -68,15 +69,122 @@ function createMainWindow() {
   mainWindow.on("closed", () => (mainWindow = null));
 }
 
-app.on("ready", createMainWindow); //app ready
+app.on("ready", () => {
+  createMainWindow();
+  const mainMenu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(mainMenu);
+}); //app ready
+
+//custom menu
+const template = [
+	// { role: 'appMenu' }
+	...(isMac ? [{
+	  label: app.name,
+	  submenu: [
+		{ role: 'about' },
+		{ type: 'separator' },
+		{ role: 'services' },
+		{ type: 'separator' },
+		{ role: 'hide' },
+		{ role: 'hideothers' },
+		{ role: 'unhide' },
+		{ type: 'separator' },
+		{ role: 'quit' }
+	  ]
+	}] : []),
+	// { role: 'fileMenu' }
+	{
+	  label: 'File',
+	  submenu: [
+		isMac ? { role: 'close' } : { role: 'quit' }
+	  ]
+	},
+	// { role: 'editMenu' }
+	{
+	  label: 'Edit',
+	  submenu: [
+		{ role: 'undo' },
+		{ role: 'redo' },
+		{ type: 'separator' },
+		{ role: 'cut' },
+		{ role: 'copy' },
+		{ role: 'paste' },
+		...(isMac ? [
+		  { role: 'pasteAndMatchStyle' },
+		  { role: 'delete' },
+		  { role: 'selectAll' },
+		  { type: 'separator' },
+		  {
+			label: 'Speech',
+			submenu: [
+			  { role: 'startspeaking' },
+			  { role: 'stopspeaking' }
+			]
+		  }
+		] : [
+		  { role: 'delete' },
+		  { type: 'separator' },
+		  { role: 'selectAll' }
+		])
+	  ]
+	},
+	// { role: 'viewMenu' }
+	{
+	  label: 'View',
+	  submenu: [
+		{ role: 'reload' },
+		{ role: 'forcereload' },
+		{ role: 'toggledevtools' },
+		{ type: 'separator' },
+		{ role: 'resetzoom' },
+		{ role: 'zoomin' },
+		{ role: 'zoomout' },
+		{ type: 'separator' },
+		{ role: 'togglefullscreen' }
+	  ]
+	},
+	//{bookmark menu}
+	{
+		label:'Bookmark',
+		submenu:[
+			{
+				label:'clear all bookmarks',
+				click:()=>clearRecords(),
+			}
+		]
+	},
+	// { role: 'windowMenu' }
+	{
+	  label: 'Window',
+	  submenu: [
+		{ role: 'minimize' },
+		{ role: 'zoom' },
+		...(isMac ? [
+		  { type: 'separator' },
+		  { role: 'front' },
+		  { type: 'separator' },
+		  { role: 'window' }
+		] : [
+		  { role: 'close' }
+		])
+	  ]
+	},
+	{
+	  role: 'help',
+	  submenu: [
+		{
+		  label: 'Learn More',
+		  click: async () => {
+			const { shell } = require('electron')
+			await shell.openExternal('https://electronjs.org')
+		  }
+		}
+	  ]
+	}
+  ]
 
 //fetch records
 ipcMain.on("records:load", sendRecords);
-async function sendRecords() {
-  const bookmarks = await Bookmark.find().sort({ created: 1 });
-  console.log(bookmarks);
-  mainWindow.webContents.send("records:get", JSON.stringify(bookmarks)); //send asynchronous msg to the renderer process via channel.
-} //do not use any arrow functions to created this type of methods
 
 //add records
 ipcMain.on("records:add", async (e, item) => {
@@ -89,19 +197,34 @@ ipcMain.on("records:add", async (e, item) => {
   }
 });
 //delete records
-ipcMain.on('records:delete',async (e,id)=>{
-	try {
-		await Bookmark.findOneAndDelete({_id:id});
-		sendRecords(); 
-	} catch (err) {
-		console.log(err);
-	}
-})
+ipcMain.on("records:delete", async (e, id) => {
+  try {
+    await Bookmark.findOneAndDelete({ _id: id });
+    sendRecords();
+  } catch (err) {
+    console.log(err);
+  }
+});
+//send records
+async function sendRecords() {
+  const bookmarks = await Bookmark.find().sort({ created: 1 });
+  console.log(bookmarks);
+  mainWindow.webContents.send("records:get", JSON.stringify(bookmarks)); //send asynchronous msg to the renderer process via channel.
+} //do not use any arrow functions to created this type of methods
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
+//clear all bookmarks
+async function clearRecords() {
+  try {
+    await Bookmark.deleteMany({});
+    mainWindow.webContents.send("records:clear");
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 app.on("activate", () => {
   if (mainWindow === null) {

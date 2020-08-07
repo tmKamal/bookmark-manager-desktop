@@ -18,6 +18,10 @@ const App = () => {
     ipcRenderer.on('records:get',(e,recs)=>{
       setRecords(JSON.parse(recs));
     })//catch asynchronous msg which send from the main
+    ipcRenderer.on('records:clear',()=>{
+      setRecords([]);
+      showAlert('All the bookmarks have been deleted !!',3000,'success');
+    })
   }, [])
 
   const addItem=(item)=>{
