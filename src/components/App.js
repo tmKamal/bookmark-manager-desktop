@@ -5,9 +5,6 @@ import { AddRecord } from "./addRecord";
 import { ipcRenderer } from "electron";
 
 
-
-
-
 const App = () => {
 	const [records,setRecords]= useState([]);
 
@@ -65,18 +62,18 @@ const App = () => {
   
   return (
     <Container>
-      <h1>Book-Marker </h1>
+      <h1 className="main-title">Book-Marker</h1>
       <AddRecord addItem={addItem} ></AddRecord>
       {alert.show && <Alert variant={alert.varient}>{alert.msg}</Alert>}
      
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>#</th>
+            
             <th>Name</th>
             <th>Category</th>
-            <th>URL</th>
             <th>Date</th>
+            <th>URL</th>
             <th>Action</th>
           </tr>
         </thead>

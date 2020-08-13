@@ -3,12 +3,13 @@ const mongoose = require("mongoose");
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(
-      "mongodb+srv://tmkamal:Pass4mongodb@bookmark-app.ryvnh.mongodb.net/bookmarker?retryWrites=true&w=majority",
+      "mongodb+srv://<username>:<password>@<somthing>.mongodb.net/<dbname>?retryWrites=true&w=majority",
       { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
     );
     console.log('connection to the mongoDB has been made!')
   } catch (err) {
     console.log(err);
+    console.log("please set your mongodb atlas db first!!, in config -> db.js")
     process.exit(1);
   }
 };
