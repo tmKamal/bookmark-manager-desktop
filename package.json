@@ -1,9 +1,9 @@
 {
-  "name": "project-manager-app",
-  "productName": "ProManagerX",
+  "name": "bookmark-manager-app",
+  "productName": "Book mate",
   "version": "1.0.0",
   "author": "tmkamal",
-  "description": "Simple bug tracking application using electron",
+  "description": "Simple bookmark application for desktop",
   "license": "MIT",
   "engines": {
     "node": ">=9.0.0",
@@ -20,7 +20,7 @@
     "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
     "package": "npm run build",
     "postpackage": "electron-packager ./ --platform win32 --out=./release-builds",
-    "dist":"electron-builder"
+    "dist": "electron-builder"
   },
   "dependencies": {
     "bootstrap": "^4.5.1",
@@ -44,20 +44,24 @@
     "electron-devtools-installer": "^3.0.0",
     "electron-packager": "^14.2.1",
     "file-loader": "^6.0.0",
+    "html-webpack-cdn-plugin": "^0.2.0",
     "html-webpack-plugin": "^4.3.0",
     "mini-css-extract-plugin": "^0.9.0",
     "style-loader": "^1.2.0",
     "webpack": "^4.43.0",
+    "webpack-cdn-plugin": "^3.3.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
   },
-  "build":{
-    "appId":"com.tmkamal.app",
-    "target":"NSIS",
-    "directories": { "output": "release/" },
-    "nsis":{
-      "allowToChangeInstallationDirectory":true,
-      "oneClick":false
+  "build": {
+    "appId": "com.tmkamal.app",
+    "target": "NSIS",
+    "directories": {
+      "output": "release/"
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false
     }
   }
 }

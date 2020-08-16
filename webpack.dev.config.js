@@ -2,6 +2,8 @@ const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { spawn } = require('child_process')
+const WebpackCdnPlugin = require('webpack-cdn-plugin');
+
 
 module.exports = {
 	module: {
@@ -28,7 +30,17 @@ module.exports = {
 	},
 	target: 'electron-renderer',
 	plugins: [
-		new HtmlWebpackPlugin({ title: 'Project manager app' }),
+		new HtmlWebpackPlugin({ title: 'Book-mate' }),
+		new WebpackCdnPlugin({
+			modules: [
+			  {
+				name: 'bootstrap',
+				var: 'Bootstrap',
+				path: 'dist/css/bootstrap.min.css'
+			  }
+			],
+			publicPath: '/node_modules'
+		  }),
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': JSON.stringify('development'),
 		}),

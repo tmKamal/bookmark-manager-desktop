@@ -3,6 +3,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const BabiliPlugin = require('babili-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const WebpackCdnPlugin = require('webpack-cdn-plugin');
 
 module.exports = {
 	module: {
@@ -29,7 +30,27 @@ module.exports = {
 	},
 	target: 'electron-renderer',
 	plugins: [
-		new HtmlWebpackPlugin({ title: 'Project manager app' }),
+		new HtmlWebpackPlugin({ title: 'Book-mate' }),
+		new WebpackCdnPlugin({
+			modules: [
+			  {
+				name: 'bootstrap',
+				var: 'Bootstrap',
+				path: 'dist/css/bootstrap.min.css'
+			  },
+			  {
+				name: 'vue-router',
+				var: 'VueRouter',
+				path: 'dist/vue-router.min.js'
+			  },
+			  {
+				name: 'vuex',
+				var: 'Vuex',
+				path: 'dist/vuex.min.js'
+			  }
+			],
+			publicPath: '/node_modules'
+		  }),
 		new MiniCssExtractPlugin({
 			// Options similar to the same options in webpackOptions.output
 			// both options are optional

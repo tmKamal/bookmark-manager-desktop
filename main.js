@@ -3,6 +3,9 @@ const url = require("url");
 const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const connectDB = require("./config/db");
 const Bookmark = require("./models/bookmark");
+
+
+
 //connect to DB
 connectDB();
 let mainWindow;
