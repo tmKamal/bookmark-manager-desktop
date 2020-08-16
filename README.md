@@ -1,4 +1,4 @@
-## Simple Electron React Boilerplate
+## Book-Mate
 
 Simple desktop application to bookmark your favourite articles and webpages.
 
@@ -7,7 +7,7 @@ Simple desktop application to bookmark your favourite articles and webpages.
 #### Clone this repo
 
 ```
-git clone https://github.com/bradtraversy/simple-electron-react.git
+git clone https://github.com/tmKamal/project-management-app-electron.git
 ```
 
 #### Install dependencies
